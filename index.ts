@@ -38,55 +38,42 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 })
 
-app.post('/profile', upload.single('avatar'), (req, res) => {
+app.post('/profile', upload.single('avatar'), async (req, res) => {
     // req.file is the `avatar` file
     // req.body will hold the text fields, if there were any
     console.log(req.file, req.body)
 
-    loadCollection(COLLECTION_NAME)
-        .then(col => {
-            const data = col.insert(req.file);
-            db.saveDatabase();
-            res.send({ id: data.$loki, fileName: data.filename })
-        })
-    // loadCollection(COLLECTION_NAME, col => {
-    //     const data = col.insert(req.file);
-    //     db.saveDatabase();
-    //     res.send({ id: data.$loki, fileName: data.filename })
+    const col = await loadCollection(COLLECTION_NAME);
+    const data = col.insert(req.file);
+    db.saveDatabase();
+    res.send({ id: data.$loki, fileName: data.filename })
     // })
 })
 
-app.post('/photos/upload', upload.array('photos', 12), (req, res) => {
+app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
     // req.files is array of `photos` files
     // req.body will contain the text fields, if there were any
     console.log(req.files, req.body)
-    loadCollection(COLLECTION_NAME)
-        .then(col => {
-            let data = [];
-            (req.files as any).forEach(x => {
-                data = data.concat(col.insert(x));
-                db.saveDatabase();
-            })
-            res.send(data.map(x => ({ id: x.$loki, fileName: x.filename })))
-        })
-
+    const col = await loadCollection(COLLECTION_NAME)
+    let data = [];
+    (req.files as any).forEach(x => {
+        data = data.concat(col.insert(x));
+        db.saveDatabase();
+    })
+    res.send(data.map(x => ({ id: x.$loki, fileName: x.filename })));
 })
 
-app.get('/images', (req, res) => {
-    loadCollection(COLLECTION_NAME)
-        .then(col => {
-            res.send(col.data);
-        })
+app.get('/images', async (req, res) => {
+    const col = await loadCollection(COLLECTION_NAME);
+    res.send(col.data);
 })
 
-app.get('/images/:id', (req, res) => {
-    loadCollection(COLLECTION_NAME)
-        .then(col => {
-            const result = col.get(req.params.id);
-            if (!result) res.send(404);
-            res.setHeader('Content-Type', result.mimetype);
-            fs.createReadStream(path.join(UPLOAD_PATH, result.filename)).pipe(res);
-        })
+app.get('/images/:id', async (req, res) => {
+    const col = await loadCollection(COLLECTION_NAME);
+    const result = col.get(req.params.id);
+    if (!result) res.send(404);
+    res.setHeader('Content-Type', result.mimetype);
+    fs.createReadStream(path.join(UPLOAD_PATH, result.filename)).pipe(res);
 })
 
 app.listen(3000, function () {
