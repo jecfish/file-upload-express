@@ -20,7 +20,7 @@ const upload = multer({
 });
 const db = new Loki('uploads/images.json', { persistenceMethod: 'fs' });
 
-
+// utils
 const loadCollection = function (colName): Promise<LokiCollection<any>> {
     return new Promise(resolve => {
         db.loadDatabase({}, () => {
@@ -46,8 +46,7 @@ app.post('/profile', upload.single('avatar'), async (req, res) => {
     const col = await loadCollection(COLLECTION_NAME);
     const data = col.insert(req.file);
     db.saveDatabase();
-    res.send({ id: data.$loki, fileName: data.filename })
-    // })
+    res.send({ id: data.$loki, fileName: data.filename });
 })
 
 app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
@@ -77,5 +76,5 @@ app.get('/images/:id', async (req, res) => {
 })
 
 app.listen(3000, function () {
-    console.log('listening on port 3000!')
+    console.log('listening on port 3000!');
 })
