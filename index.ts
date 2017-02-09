@@ -39,22 +39,17 @@ app.get('/', (req, res) => {
 })
 
 app.post('/profile', upload.single('avatar'), async (req, res) => {
-    // req.file is the `avatar` file
-    // req.body will hold the text fields, if there were any
-    console.log(req.file, req.body)
-
     const col = await loadCollection(COLLECTION_NAME);
     const data = col.insert(req.file);
+
     db.saveDatabase();
     res.send({ id: data.$loki, fileName: data.filename });
 })
 
 app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
-    // req.files is array of `photos` files
-    // req.body will contain the text fields, if there were any
-    console.log(req.files, req.body)
     const col = await loadCollection(COLLECTION_NAME)
     let data = [];
+
     (req.files as any).forEach(x => {
         data = data.concat(col.insert(x));
         db.saveDatabase();
@@ -64,12 +59,14 @@ app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
 
 app.get('/images', async (req, res) => {
     const col = await loadCollection(COLLECTION_NAME);
+
     res.send(col.data);
 })
 
 app.get('/images/:id', async (req, res) => {
     const col = await loadCollection(COLLECTION_NAME);
     const result = col.get(req.params.id);
+
     if (!result) res.send(404);
     res.setHeader('Content-Type', result.mimetype);
     fs.createReadStream(path.join(UPLOAD_PATH, result.filename)).pipe(res);
