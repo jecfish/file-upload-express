@@ -8,7 +8,16 @@ import * as Loki from 'lokijs'
 // setup
 const UPLOAD_PATH = './uploads';
 const COLLECTION_NAME = 'images';
-const upload = multer({ dest: `${UPLOAD_PATH}/` });
+const upload = multer({
+    dest: `${UPLOAD_PATH}/`,
+    fileFilter: function (req, file, cb) {
+        // accept image only
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+            return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+    }
+});
 const db = new Loki('uploads/images.json', { persistenceMethod: 'fs' });
 
 
