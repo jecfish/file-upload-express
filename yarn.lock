@@ -2,6 +2,12 @@
 # yarn lockfile v1
 
 
+"@types/del@^2.2.32":
+  version "2.2.32"
+  resolved "https://registry.yarnpkg.com/@types/del/-/del-2.2.32.tgz#4d54df0ed3017435e6b1995df0292957787fc6b2"
+  dependencies:
+    "@types/glob" "*"
+
 "@types/express-serve-static-core@*":
   version "4.0.40"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.0.40.tgz#168e82978bffc81ee7737bc60728d64733a4f37b"
@@ -15,6 +21,13 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
+"@types/glob@*":
+  version "5.0.30"
+  resolved "https://registry.yarnpkg.com/@types/glob/-/glob-5.0.30.tgz#1026409c5625a8689074602808d082b2867b8a51"
+  dependencies:
+    "@types/minimatch" "*"
+    "@types/node" "*"
+
 "@types/lokijs@^1.2.30":
   version "1.2.30"
   resolved "https://registry.yarnpkg.com/@types/lokijs/-/lokijs-1.2.30.tgz#ad7297c7766e94fe84a821f7a1a2916ed87ca55c"
@@ -22,6 +35,10 @@
 "@types/mime@*":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-0.0.29.tgz#fbcfd330573b912ef59eeee14602bface630754b"
+
+"@types/minimatch@*":
+  version "2.0.29"
+  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
 "@types/multer@^0.0.33":
   version "0.0.33"

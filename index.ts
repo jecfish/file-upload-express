@@ -4,34 +4,20 @@ import * as cors from 'cors'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as Loki from 'lokijs'
+import { imageFilter, loadCollection, cleanFolder } from './utils';
 
 // setup
-const UPLOAD_PATH = './uploads';
+const DB_NAME = 'db.json';
 const COLLECTION_NAME = 'images';
-const upload = multer({
-    dest: `${UPLOAD_PATH}/`,
-    fileFilter: function (req, file, cb) {
-        // accept image only
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-            return cb(new Error('Only image files are allowed!'), false);
-        }
-        cb(null, true);
-    }
-});
-const db = new Loki('uploads/images.json', { persistenceMethod: 'fs' });
+const UPLOAD_PATH = 'uploads';
+const upload = multer({ dest: `${UPLOAD_PATH}/`, fileFilter: imageFilter });
+const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 
-// utils
-const loadCollection = function (colName): Promise<LokiCollection<any>> {
-    return new Promise(resolve => {
-        db.loadDatabase({}, () => {
-            const _collection = db.getCollection(colName) || db.addCollection(colName);
-            resolve(_collection);
-        })
-    });
-}
+// optional: clean all data before start
+cleanFolder(UPLOAD_PATH);
 
-// express
-var app = express();
+// app
+const app = express();
 app.use(cors());
 
 app.get('/', (req, res) => {
@@ -39,7 +25,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/profile', upload.single('avatar'), async (req, res) => {
-    const col = await loadCollection(COLLECTION_NAME);
+    const col = await loadCollection(COLLECTION_NAME, db);
     const data = col.insert(req.file);
 
     db.saveDatabase();
@@ -47,7 +33,7 @@ app.post('/profile', upload.single('avatar'), async (req, res) => {
 })
 
 app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
-    const col = await loadCollection(COLLECTION_NAME)
+    const col = await loadCollection(COLLECTION_NAME, db)
     let data = [];
 
     (req.files as any).forEach(x => {
@@ -58,16 +44,19 @@ app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
 })
 
 app.get('/images', async (req, res) => {
-    const col = await loadCollection(COLLECTION_NAME);
+    const col = await loadCollection(COLLECTION_NAME, db);
 
     res.send(col.data);
 })
 
 app.get('/images/:id', async (req, res) => {
-    const col = await loadCollection(COLLECTION_NAME);
+    const col = await loadCollection(COLLECTION_NAME, db);
     const result = col.get(req.params.id);
 
-    if (!result) res.send(404);
+    if (!result) {
+        res.sendStatus(404);
+        return;
+    };
     res.setHeader('Content-Type', result.mimetype);
     fs.createReadStream(path.join(UPLOAD_PATH, result.filename)).pipe(res);
 })
