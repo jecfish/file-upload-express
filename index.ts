@@ -26,7 +26,7 @@ app.post('/profile', upload.single('avatar'), async (req, res) => {
         const data = col.insert(req.file);
 
         db.saveDatabase();
-        res.send({ id: data.$loki, fileName: data.filename });
+        res.send({ id: data.$loki, fileName: data.filename, originalName: data.originalname });
     } catch (err) {
         res.sendStatus(400);
     }
@@ -38,7 +38,7 @@ app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
         let data = [].concat(col.insert(req.files));
 
         db.saveDatabase();
-        res.send(data.map(x => ({ id: x.$loki, fileName: x.filename })));
+        res.send(data.map(x => ({ id: x.$loki, fileName: x.filename, originalName: x.originalname })));
     } catch (err) {
         res.sendStatus(400);
     }
