@@ -34,12 +34,9 @@ app.post('/profile', upload.single('avatar'), async (req, res) => {
 
 app.post('/photos/upload', upload.array('photos', 12), async (req, res) => {
     const col = await loadCollection(COLLECTION_NAME, db)
-    let data = [];
+    let data = col.insert(req.files);
 
-    (req.files as any).forEach(x => {
-        data = data.concat(col.insert(x));
-        db.saveDatabase();
-    })
+    db.saveDatabase();
     res.send(data.map(x => ({ id: x.$loki, fileName: x.filename })));
 })
 
