@@ -14,7 +14,7 @@ const upload = multer({ dest: `${UPLOAD_PATH}/`, fileFilter: imageFilter });
 const db = new Loki(`${UPLOAD_PATH}/${DB_NAME}`, { persistenceMethod: 'fs' });
 
 // optional: clean all data before start
-cleanFolder(UPLOAD_PATH);
+// cleanFolder(UPLOAD_PATH);
 
 // app
 const app = express();
