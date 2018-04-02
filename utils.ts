@@ -1,5 +1,5 @@
 import * as del from 'del';
-import * as Loki from 'lokijs';
+import { Collection } from 'lokijs';
 
 const imageFilter = function (req, file, cb) {
     // accept image only
@@ -9,7 +9,7 @@ const imageFilter = function (req, file, cb) {
     cb(null, true);
 };
 
-const loadCollection = function (colName, db: Loki): Promise<LokiCollection<any>> {
+const loadCollection = function (colName, db: Loki): Promise<Collection<any>> {
     return new Promise(resolve => {
         db.loadDatabase({}, () => {
             const _collection = db.getCollection(colName) || db.addCollection(colName);
