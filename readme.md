@@ -13,3 +13,6 @@ This is the repo for tutorial: https://scotch.io/tutorials/express-file-uploads-
 2. Bulk Upload images via `localhost:3000/photos/upload`, photos field.
 3. View list of images via `localhost:3000/images`.
 4. Get a single image via `localhost:3000/images/{imageId}`.
+
+# License
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](/LICENSE)
